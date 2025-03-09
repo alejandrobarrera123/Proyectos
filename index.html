@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulario de Contacto</title>
+  </head>
+  <body>
+    <h2>Formulario de Contacto</h2>
+    <form id="contact-form">
+      <label>Nombre:</label>
+      <input type="text" name="nombre" required /><br />
+      <label>Email:</label>
+      <input type="email" name="email" required /><br />
+      <label>Mensaje:</label>
+      <textarea name="mensaje" required></textarea><br />
+      <button type="submit">Enviar</button>
+    </form>
+
+    <div id="resultado"></div>
+
+    <script>
+      document
+        .getElementById('contact-form')
+        .addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const form = e.target;
+          const data = {
+            nombre: form.nombre.value,
+            email: form.email.value,
+            mensaje: form.mensaje.value,
+          };
+
+          try {
+            const response = await fetch('/api/guardarFormulario', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
+            });
+
+            const resultado = document.getElementById('resultado');
+            const respuesta = await response.json();
+            if (response.ok) {
+              resultado.textContent = respuesta.mensaje;
+              form.reset();
+            } else {
+              resultado.textContent = 'Error: ' + respuesta.error;
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        });
+    </script>
+  </body>
+</html>
